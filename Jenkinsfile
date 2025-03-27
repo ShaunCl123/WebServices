@@ -2,51 +2,41 @@ pipeline {
     agent any
 
     environment {
-        APP_NAME = 'Inventory'
+        INVENTORY_NAME = 'Inventory'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                bat 'git clone https://github.com/your-repo/Inventory.git'
+                checkout scm
             }
         }
 
         stage('Build') {
             steps {
-                bat 'echo Building the project...'
-                bat 'gradlew.bat build' // Use the Windows version of Gradle if applicable
+                bat 'gradlew.bat build'
             }
         }
 
         stage('Test') {
             steps {
-                bat 'echo Running tests...'
-                bat 'python -m unittest discover' // Ensure Python is installed and in PATH
-            }
-        }
-
-        stage('Package') {
-            steps {
-                bat 'echo Packaging application...'
-                bat 'jar -cvf %APP_NAME%.jar -C build/libs .' // Adjust if packaging differently
+                bat 'gradlew.bat test'
             }
         }
 
         stage('Deploy') {
             steps {
-                bat 'echo Deploying application...'
-                bat 'copy %APP_NAME%.jar C:\\deploy\\' // Adjust path for deployment location
+                bat 'deploy.bat'
             }
         }
     }
 
     post {
         success {
-            bat 'echo Build and deployment successful!'
+            echo 'Pipeline completed successfully.'
         }
         failure {
-            bat 'echo Build failed. Check logs for details.'
+            echo 'Pipeline failed.'
         }
     }
 }
