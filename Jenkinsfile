@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        PATH = "C:\\Users\\yuiku\\AppData\\Local\\Programs\\Python\\Python310;${PATH}"
+    }
+
     stages {
         stage('Clone Repository') {
             steps {
@@ -8,24 +12,38 @@ pipeline {
             }
         }
 
-        stage('Setup Virtual Environment') {
-            steps {
-                bat 'C:\\Users\\yuiku\\AppData\\Local\\Programs\\Python\\Python310\\python.exe -m venv venv'
-                bat 'venv\\Scripts\\activate'
-            }
-        }
-
         stage('Install Dependencies') {
             steps {
-                bat 'venv\\Scripts\\python.exe -m pip install --upgrade pip'
-                bat 'venv\\Scripts\\pip install -r requirements.txt'
+                bat 'C:\\Users\\yuiku\\AppData\\Local\\Programs\\Python\\Python310\\python.exe -m pip install --upgrade pip'
+                bat 'C:\\Users\\yuiku\\AppData\\Local\\Programs\\Python\\Python310\\python.exe -m pip install -r requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                bat 'venv\\Scripts\\pytest'
+                bat 'C:\\Users\\yuiku\\AppData\\Local\\Programs\\Python\\Python310\\python.exe -m pytest'
             }
+        }
+
+        stage('Build') {
+            steps {
+                echo 'Building the application...'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying the application...'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline executed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
         }
     }
 }
