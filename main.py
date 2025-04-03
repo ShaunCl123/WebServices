@@ -19,7 +19,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Connect to MongoDB (Cloud-based)
+# Connect to MongoDB 
 client = MongoClient("mongodb+srv://shaun:shaun123@cluster0.hgdl308.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 db = client["WebServices"]
 collection = db["products"]
@@ -52,17 +52,20 @@ def get_all():
     return products
 
 # Add a new product using JSON body (POST request)
-@app.post("/addNew")
-def add_new(product: Product):
-    product_data = product.dict()
-    existing_product = collection.find_one({"Product ID": product.ProductID})
-    if existing_product:
-        raise HTTPException(status_code=400, detail="Product already exists")
-    collection.insert_one(product_data)
-    return {"message": "Product added successfully"}
+@app.get("/addNew/{product_id}/{name}/{unit_price}/{stock_quantity}/{description}")
+def add_new(product_id: str, name: str, unit_price: float, stock_quantity: int, description: str):
+    new_product = {
+        "Product ID": product_id,
+        "Name": name,
+        "Unit Price": unit_price,
+        "Stock Quantity": stock_quantity,
+        "Description": description
+    }
+    collection.insert_one(new_product)
+    return {"message": "Product added successfully", "product_id": str(new_product)}
 
 # Delete a product by ID
-@app.delete("/deleteOne/{product_id}")
+@app.get("/deleteOne/{product_id}")
 def delete_one(product_id: str):
     result = collection.delete_one({"Product ID": product_id})
     if result.deleted_count == 0:
